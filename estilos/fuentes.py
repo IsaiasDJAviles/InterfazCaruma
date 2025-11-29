@@ -1,0 +1,17 @@
+"""
+Estilos de fuentes del sistema
+"""
+
+class Fuentes:
+    # Fuentes principales
+    FAMILIA_PRINCIPAL = "Segoe UI"
+    FAMILIA_ALTERNATIVA = "Arial"
+    
+    # Tamaños y estilos
+    FUENTE_ENCABEZADO = (FAMILIA_PRINCIPAL, 28, "bold")
+    FUENTE_SUBTITULO = (FAMILIA_PRINCIPAL, 14)
+    FUENTE_TITULOS = (FAMILIA_PRINCIPAL, 20, "bold")
+    FUENTE_TEXTO = (FAMILIA_PRINCIPAL, 12)
+    FUENTE_TEXTO_GRANDE = (FAMILIA_PRINCIPAL, 14)
+    FUENTE_BOTONES = (FAMILIA_PRINCIPAL, 13, "bold")
+    FUENTE_MENU = (FAMILIA_PRINCIPAL, 11)

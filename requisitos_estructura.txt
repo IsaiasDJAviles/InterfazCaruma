@@ -1,0 +1,52 @@
+​
+
+Descripción:​
+
+La integrante Renata Castro tiene un emprendimiento de barras para eventos "Caruma" que ofrece servicios de esquites, michelada, chicharrones, sopas preparadas y tostiesquites.​
+
+Ha comentado que una de sus problemáticas es que no lleva un sistema de inventario como tal y que le gustaría poder implementar algo así para llevar el control de la mercancía.​
+
+Algunas ideas que implementaríamos serían:​
+-Conexión con base de datos ​
+
+-panel para ver todas las mercancías con nombre y cantidad de stock.​
+
+- panel de check-list para mercancía que falta por comprar.​
+
+-Panel de ingreso de producto nuevo.​
+
+-alertas de poca cantidad de productos
+
+
+proyecto_caruma/
+│
+├── config/
+│   ├── __init__.py
+│   ├── constantes.py
+│   └── db_config.py
+│
+├── estilos/
+│   ├── __init__.py
+│   ├── colores.py
+│   └── fuentes.py
+│
+├── utils/
+│   ├── __init__.py
+│   ├── db_connection.py
+│   └── posiciones.py
+│
+├── ventanas/
+│   ├── __init__.py
+│   ├── formularios.py
+│   ├── categorias.py
+│   ├── insumos.py
+│   └── servicios.py
+│
+├── assets/
+│   └── imagenes/
+│
+├── database/
+│   └── schema.sql
+│
+├── main.py
+└── requirements.txt
