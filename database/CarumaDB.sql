@@ -65,6 +65,23 @@ INSERT INTO categorias (nombre) VALUES
 ON CONFLICT (nombre) DO NOTHING;
 
 -- =============================================
+-- Datos de ejemplo para insumos
+-- =============================================
+
+INSERT INTO insumos (nombre, id_categoria, piezas, contenido_por_pieza, unidad_contenido, fecha_caducidad, alerta_piezas)
+VALUES
+('Plátano', 1, 25, 1.00, 'pieza', '2025-01-20', 10),
+('Manzana Verde', 1, 40, 1.00, 'pieza', '2025-02-05', 15),
+('Espinaca', 2, 12, 200.00, 'gramos', '2024-12-18', 5),
+('Yogurt Natural', 3, 18, 250.00, 'ml', '2024-12-10', 8),
+('Leche Deslactosada', 3, 30, 1.00, 'litro', '2024-12-15', 10),
+('Salsa Chamoy', 4, 20, 355.00, 'ml', '2026-03-01', 5),
+('Cacahuates Enchilados', 5, 50, 100.00, 'gramos', '2025-08-10', 20),
+('Botella de Agua', 6, 80, 600.00, 'ml', NULL, 20),
+('Canela Molida', 7, 15, 50.00, 'gramos', '2026-11-01', 5),
+('Vasos Plásticos 16oz', 8, 200, 1.00, 'pieza', NULL, 50);
+
+-- =============================================
 -- Índices para mejorar rendimiento
 -- =============================================
 
@@ -72,3 +89,5 @@ CREATE INDEX IF NOT EXISTS idx_insumos_categoria ON insumos(id_categoria);
 CREATE INDEX IF NOT EXISTS idx_servicio_insumo_servicio ON servicio_insumo(id_servicio);
 CREATE INDEX IF NOT EXISTS idx_servicio_insumo_insumo ON servicio_insumo(id_insumo);
 CREATE INDEX IF NOT EXISTS idx_alertas_insumo ON alertas(id_insumo);
+
+

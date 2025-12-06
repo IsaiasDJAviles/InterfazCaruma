@@ -168,9 +168,13 @@ class AplicacionCaruma(tk.Tk):
         from ventanas.categorias import abrir_ventana_categorias
         abrir_ventana_categorias(self)
     
-    # ==================== MÓDULOS EN DESARROLLO ====================
+    # ==================== MÓDULO DE INSUMOS ====================
     def abrir_insumos(self):
-        messagebox.showinfo("En desarrollo", "Módulo de Insumos en desarrollo")
+        """Abre el módulo de gestión de insumos"""
+        from ventanas.insumos import abrir_ventana_insumos
+        abrir_ventana_insumos(self)
+    
+    # ==================== MÓDULOS EN DESARROLLO ====================
     
     def abrir_servicios(self):
         messagebox.showinfo("En desarrollo", "Módulo de Servicios en desarrollo")
