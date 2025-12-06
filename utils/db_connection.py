@@ -6,6 +6,7 @@ import psycopg2
 from psycopg2 import pool
 from config.db_config import DB_CONFIG
 
+
 class Database:
     _connection_pool = None
     
@@ -62,6 +63,24 @@ class Database:
         except Exception as e:
             conn.rollback()
             print(f"Error en execute_update: {e}")
+            raise
+        finally:
+            cls.return_connection(conn)
+    
+    @classmethod
+    def execute_insert_returning(cls, query, params=None):
+        """Ejecuta INSERT y retorna el ID insertado"""
+        conn = cls.get_connection()
+        try:
+            cursor = conn.cursor()
+            cursor.execute(query, params)
+            result = cursor.fetchone()
+            conn.commit()
+            cursor.close()
+            return result[0] if result else None
+        except Exception as e:
+            conn.rollback()
+            print(f"Error en execute_insert_returning: {e}")
             raise
         finally:
             cls.return_connection(conn)

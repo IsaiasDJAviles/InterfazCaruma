@@ -15,6 +15,7 @@ from utils.db_connection import Database
 from utils.posiciones import Posiciones
 from ventanas.formularios import GestorFormularios
 
+
 class AplicacionCaruma(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -161,10 +162,13 @@ class AplicacionCaruma(tk.Tk):
             )
             boton.grid(row=fila, column=columna, padx=15, pady=15)
     
-    # Métodos para abrir ventanas (placeholders)
+    # ==================== MÓDULO DE CATEGORÍAS ====================
     def abrir_categorias(self):
-        messagebox.showinfo("En desarrollo", "Módulo de Categorías en desarrollo")
+        """Abre el módulo de gestión de categorías"""
+        from ventanas.categorias import abrir_ventana_categorias
+        abrir_ventana_categorias(self)
     
+    # ==================== MÓDULOS EN DESARROLLO ====================
     def abrir_insumos(self):
         messagebox.showinfo("En desarrollo", "Módulo de Insumos en desarrollo")
     
