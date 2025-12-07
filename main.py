@@ -143,11 +143,11 @@ class AplicacionCaruma(tk.Tk):
         
         # Botones de acceso rápido
         botones = [
-            ("📋 Gestionar Categorías", self.abrir_categorias),
-            ("📦 Gestionar Insumos", self.abrir_insumos),
-            ("🍹 Gestionar Servicios", self.abrir_servicios),
-            ("📊 Ver Inventario", self.abrir_inventario),
-            ("⚠️ Ver Alertas", self.abrir_alertas),
+            ("Gestionar Categorías", self.abrir_categorias),
+            ("Gestionar Insumos", self.abrir_insumos),
+            ("Gestionar Servicios", self.abrir_servicios),
+            ("Ver Inventario", self.abrir_inventario),
+            ("Ver Alertas", self.abrir_alertas),
         ]
         
         for i, (texto, comando) in enumerate(botones):

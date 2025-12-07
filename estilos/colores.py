@@ -5,7 +5,7 @@ Colores extraídos: Negro, Dorado/Amarillo, Blanco
 
 class PaletaColores:
     # Colores principales de Caruma
-    NEGRO_CARUMA = "#1A1A1A"          # Negro principal
+    NEGRO_CARUMA = "#000000"          # Negro principal
     DORADO_CARUMA = "#D4AF37"         # Dorado/amarillo
     DORADO_CLARO = "#F4D03F"          # Amarillo claro
     BLANCO = "#FFFFFF"                # Blanco
