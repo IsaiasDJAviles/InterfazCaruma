@@ -171,18 +171,18 @@ class VentanaAlertas:
         frame = tk.Frame(self.frame_principal, bg=PaletaColores.COLOR_FONDO)
         frame.pack(fill="x", pady=(0, 15))
         
-        tk.Label(frame, text="⚠️ Centro de Alertas", font=Fuentes.FUENTE_TITULOS,
+        tk.Label(frame, text="Centro de Alertas", font=Fuentes.FUENTE_TITULOS,
                  bg=PaletaColores.COLOR_FONDO, fg=PaletaColores.DORADO_CARUMA).pack(side="left")
         
         # Botones de acción
         frame_btns = tk.Frame(frame, bg=PaletaColores.COLOR_FONDO)
         frame_btns.pack(side="right")
         
-        tk.Button(frame_btns, text="🔄 Actualizar", font=Fuentes.FUENTE_MENU,
+        tk.Button(frame_btns, text="Actualizar", font=Fuentes.FUENTE_MENU,
                   bg=PaletaColores.DORADO_CARUMA, relief="flat", cursor="hand2",
                   padx=10, command=self.cargar_datos).pack(side="left", padx=5)
         
-        tk.Button(frame_btns, text="📋 Generar Reporte", font=Fuentes.FUENTE_MENU,
+        tk.Button(frame_btns, text="Generar Reporte", font=Fuentes.FUENTE_MENU,
                   bg=PaletaColores.COLOR_INFO, fg=PaletaColores.BLANCO,
                   relief="flat", cursor="hand2", padx=10,
                   command=self.generar_reporte).pack(side="left", padx=5)
@@ -232,22 +232,22 @@ class VentanaAlertas:
         
         # Pestaña Stock Bajo
         self.tab_stock = tk.Frame(self.notebook, bg=PaletaColores.COLOR_FONDO)
-        self.notebook.add(self.tab_stock, text="⚠️ Stock Bajo")
+        self.notebook.add(self.tab_stock, text="Stock Bajo")
         self.crear_tabla_stock_bajo()
         
         # Pestaña Por Caducar
         self.tab_caducar = tk.Frame(self.notebook, bg=PaletaColores.COLOR_FONDO)
-        self.notebook.add(self.tab_caducar, text="📅 Por Caducar")
+        self.notebook.add(self.tab_caducar, text="Por Caducar")
         self.crear_tabla_por_caducar()
         
         # Pestaña Caducados
         self.tab_caducados = tk.Frame(self.notebook, bg=PaletaColores.COLOR_FONDO)
-        self.notebook.add(self.tab_caducados, text="❌ Caducados")
+        self.notebook.add(self.tab_caducados, text="Caducados")
         self.crear_tabla_caducados()
         
         # Pestaña Historial
         self.tab_historial = tk.Frame(self.notebook, bg=PaletaColores.COLOR_FONDO)
-        self.notebook.add(self.tab_historial, text="📜 Historial")
+        self.notebook.add(self.tab_historial, text="Historial")
         self.crear_tabla_historial()
     
     def crear_tabla_stock_bajo(self):
@@ -295,7 +295,7 @@ class VentanaAlertas:
         frame_acciones = tk.Frame(self.tab_stock, bg=PaletaColores.COLOR_FONDO)
         frame_acciones.pack(fill="x", padx=10, pady=(0, 10))
         
-        tk.Button(frame_acciones, text="📝 Generar Lista de Compras", font=Fuentes.FUENTE_BOTONES,
+        tk.Button(frame_acciones, text="Generar Lista de Compras", font=Fuentes.FUENTE_BOTONES,
                   bg=PaletaColores.DORADO_CARUMA, relief="flat", cursor="hand2",
                   padx=15, pady=8, command=self.generar_lista_compras).pack(side="left")
     
@@ -345,7 +345,7 @@ class VentanaAlertas:
         frame_info = tk.Frame(self.tab_caducados, bg=PaletaColores.COLOR_FONDO)
         frame_info.pack(fill="x", padx=10, pady=10)
         
-        tk.Label(frame_info, text="⚠️ Insumos que ya caducaron - Requieren atención inmediata",
+        tk.Label(frame_info, text="Insumos que ya caducaron - Requieren atención inmediata",
                  font=Fuentes.FUENTE_TEXTO, bg=PaletaColores.COLOR_FONDO,
                  fg=PaletaColores.COLOR_ERROR).pack(side="left")
         
@@ -384,7 +384,7 @@ class VentanaAlertas:
         frame_warn = tk.Frame(self.tab_caducados, bg="#FFEBEE", padx=10, pady=8)
         frame_warn.pack(fill="x", padx=10, pady=(0, 10))
         
-        tk.Label(frame_warn, text="⚠️ Los productos caducados deben ser retirados del inventario por seguridad alimentaria",
+        tk.Label(frame_warn, text="Los productos caducados deben ser retirados del inventario por seguridad alimentaria",
                  font=Fuentes.FUENTE_TEXTO, bg="#FFEBEE", fg=PaletaColores.COLOR_ERROR).pack()
     
     def crear_tabla_historial(self):
@@ -396,7 +396,7 @@ class VentanaAlertas:
                  font=Fuentes.FUENTE_TEXTO, bg=PaletaColores.COLOR_FONDO,
                  fg=PaletaColores.GRIS_MEDIO).pack(side="left")
         
-        tk.Button(frame_info, text="🗑️ Limpiar Historial", font=Fuentes.FUENTE_MENU,
+        tk.Button(frame_info, text="Limpiar Historial", font=Fuentes.FUENTE_MENU,
                   bg=PaletaColores.COLOR_ERROR, fg=PaletaColores.BLANCO,
                   relief="flat", cursor="hand2", padx=8,
                   command=self.limpiar_historial).pack(side="right")
@@ -441,10 +441,10 @@ class VentanaAlertas:
         total = stock_bajo + por_caducar + caducados
         
         tarjetas = [
-            ("Total Alertas", total, "🔔", PaletaColores.GRIS_CLARO, PaletaColores.NEGRO_CARUMA, "Alertas activas"),
-            ("Stock Bajo", stock_bajo, "⚠️", PaletaColores.COLOR_ALERTA, PaletaColores.NEGRO_CARUMA, "Necesitan compra"),
-            ("Por Caducar", por_caducar, "📅", "#FF9800", PaletaColores.BLANCO, "Próximos 7 días"),
-            ("Caducados", caducados, "❌", PaletaColores.COLOR_ERROR, PaletaColores.BLANCO, "Retirar urgente"),
+            ("Total Alertas", total, "", PaletaColores.GRIS_CLARO, PaletaColores.NEGRO_CARUMA, "Alertas activas"),
+            ("Stock Bajo", stock_bajo, "", PaletaColores.COLOR_ALERTA, PaletaColores.NEGRO_CARUMA, "Necesitan compra"),
+            ("Por Caducar", por_caducar, "", "#FF9800", PaletaColores.BLANCO, "Próximos 7 días"),
+            ("Caducados", caducados, "", PaletaColores.COLOR_ERROR, PaletaColores.BLANCO, "Retirar urgente"),
         ]
         
         for titulo, valor, icono, bg, fg, desc in tarjetas:

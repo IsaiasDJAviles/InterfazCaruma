@@ -32,7 +32,7 @@ class Posiciones:
                     cls._logo_caruma = tk.PhotoImage(file=ruta_logo)
                     # Redimensionar si es necesario (subsample reduce, zoom aumenta)
                     # Ajusta estos valores según el tamaño de tu logo
-                    cls._logo_caruma = cls._logo_caruma.subsample(2, 2)
+                    cls._logo_caruma = cls._logo_caruma.subsample(3, 3)
                 else:
                     print(f"Logo no encontrado en: {ruta_logo}")
                     cls._logo_caruma = None
@@ -51,7 +51,7 @@ class Posiciones:
         encabezado = tk.Frame(
             window,
             background=PaletaColores.NEGRO_CARUMA,
-            height=225  # Aumentado para dar espacio al logo
+            height=150  # Aumentado para dar espacio al logo
         )
         encabezado.pack(fill="x", expand=False, side="top")
         encabezado.pack_propagate(False)

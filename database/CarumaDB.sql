@@ -1,7 +1,7 @@
--- =============================================
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -- CARUMA - Sistema de Gestión de Insumos
 -- Script de creación de base de datos
--- =============================================
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -- Crear base de datos (ejecutar por separado si es necesario)
 -- CREATE DATABASE CarumaDB;
@@ -49,9 +49,9 @@ CREATE TABLE IF NOT EXISTS alertas (
     mensaje TEXT
 );
 
--- =============================================
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -- Datos de ejemplo para categorías
--- =============================================
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 INSERT INTO categorias (nombre) VALUES 
     ('Frutas'),
@@ -64,9 +64,9 @@ INSERT INTO categorias (nombre) VALUES
     ('Desechables')
 ON CONFLICT (nombre) DO NOTHING;
 
--- =============================================
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -- Datos de ejemplo para insumos
--- =============================================
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 INSERT INTO insumos (nombre, id_categoria, piezas, contenido_por_pieza, unidad_contenido, fecha_caducidad, alerta_piezas)
 VALUES
@@ -81,9 +81,9 @@ VALUES
 ('Canela Molida', 7, 15, 50.00, 'gramos', '2026-11-01', 5),
 ('Vasos Plásticos 16oz', 8, 200, 1.00, 'pieza', NULL, 50);
 
--- =============================================
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -- Índices para mejorar rendimiento
--- =============================================
+-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CREATE INDEX IF NOT EXISTS idx_insumos_categoria ON insumos(id_categoria);
 CREATE INDEX IF NOT EXISTS idx_servicio_insumo_servicio ON servicio_insumo(id_servicio);

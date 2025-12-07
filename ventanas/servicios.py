@@ -186,7 +186,7 @@ class VentanaServicios:
     def crear_titulo(self):
         frame = tk.Frame(self.frame_principal, bg=PaletaColores.COLOR_FONDO)
         frame.pack(fill="x", pady=(0, 15))
-        tk.Label(frame, text="🍹 Gestión de Servicios", font=Fuentes.FUENTE_TITULOS,
+        tk.Label(frame, text="Gestión de Servicios", font=Fuentes.FUENTE_TITULOS,
                  bg=PaletaColores.COLOR_FONDO, fg=PaletaColores.DORADO_CARUMA).pack(side="left")
     
     def crear_panel_servicios(self):
@@ -201,29 +201,29 @@ class VentanaServicios:
         frame_tools = tk.Frame(self.frame_servicios, bg=PaletaColores.COLOR_FONDO)
         frame_tools.pack(fill="x", pady=(0, 10))
         
-        tk.Label(frame_tools, text="🔍", bg=PaletaColores.COLOR_FONDO).pack(side="left")
+        tk.Label(frame_tools, text='', bg=PaletaColores.COLOR_FONDO).pack(side="left")
         self.ent_buscar = tk.Entry(frame_tools, font=Fuentes.FUENTE_TEXTO, width=20, relief="solid", bd=1)
         self.ent_buscar.pack(side="left", padx=(3, 10))
         self.ent_buscar.bind("<KeyRelease>", self.buscar)
         
-        self.btn_nuevo = tk.Button(frame_tools, text="➕ Nuevo", font=Fuentes.FUENTE_MENU,
+        self.btn_nuevo = tk.Button(frame_tools, text="Nuevo", font=Fuentes.FUENTE_MENU,
                                     bg=PaletaColores.DORADO_CARUMA, relief="flat", cursor="hand2",
                                     padx=10, command=self.form_nuevo)
         self.btn_nuevo.pack(side="left", padx=2)
         
-        self.btn_editar = tk.Button(frame_tools, text="✏️", font=Fuentes.FUENTE_MENU,
+        self.btn_editar = tk.Button(frame_tools, text="Editar", font=Fuentes.FUENTE_MENU,
                                      bg=PaletaColores.DORADO_CARUMA, relief="flat", cursor="hand2",
                                      padx=8, state="disabled", command=self.form_editar)
         self.btn_editar.pack(side="left", padx=2)
         
-        self.btn_eliminar = tk.Button(frame_tools, text="🗑️", font=Fuentes.FUENTE_MENU,
+        self.btn_eliminar = tk.Button(frame_tools, text="X", font=Fuentes.FUENTE_MENU,
                                        bg=PaletaColores.COLOR_ERROR, fg=PaletaColores.BLANCO,
                                        relief="flat", cursor="hand2", padx=8,
                                        state="disabled", command=self.eliminar_servicio)
         self.btn_eliminar.pack(side="left", padx=2)
         
         # Contador
-        self.lbl_contador = tk.Label(frame_tools, text="", font=Fuentes.FUENTE_MENU,
+        self.lbl_contador = tk.Label(frame_tools, text="+", font=Fuentes.FUENTE_MENU,
                                       bg=PaletaColores.COLOR_FONDO, fg=PaletaColores.GRIS_MEDIO)
         self.lbl_contador.pack(side="right")
         
@@ -273,10 +273,10 @@ class VentanaServicios:
         self.ent_nombre.pack(side="left", padx=(5, 10))
         self.ent_nombre.bind("<Return>", lambda e: self.guardar_servicio())
         
-        tk.Button(frame_campos, text="💾", font=Fuentes.FUENTE_BOTONES, bg=PaletaColores.COLOR_EXITO,
+        tk.Button(frame_campos, text="OK", font=Fuentes.FUENTE_BOTONES, bg=PaletaColores.COLOR_EXITO,
                   fg=PaletaColores.BLANCO, relief="flat", padx=8,
                   command=self.guardar_servicio).pack(side="left", padx=2)
-        tk.Button(frame_campos, text="❌", font=Fuentes.FUENTE_BOTONES, bg=PaletaColores.GRIS_MEDIO,
+        tk.Button(frame_campos, text="Cancel", font=Fuentes.FUENTE_BOTONES, bg=PaletaColores.GRIS_MEDIO,
                   fg=PaletaColores.BLANCO, relief="flat", padx=8,
                   command=self.ocultar_form).pack(side="left", padx=2)
     
@@ -297,18 +297,18 @@ class VentanaServicios:
         frame_btns = tk.Frame(self.frame_insumos, bg=PaletaColores.COLOR_FONDO)
         frame_btns.pack(fill="x", pady=(0, 10))
         
-        self.btn_agregar_ins = tk.Button(frame_btns, text="➕ Agregar Insumo", font=Fuentes.FUENTE_MENU,
+        self.btn_agregar_ins = tk.Button(frame_btns, text="Agregar Insumo", font=Fuentes.FUENTE_MENU,
                                           bg=PaletaColores.DORADO_CARUMA, relief="flat", cursor="hand2",
                                           padx=10, state="disabled", command=self.mostrar_agregar_insumo)
         self.btn_agregar_ins.pack(side="left", padx=(0, 5))
         
-        self.btn_editar_ins = tk.Button(frame_btns, text="✏️ Editar", font=Fuentes.FUENTE_MENU,
+        self.btn_editar_ins = tk.Button(frame_btns, text="Editar", font=Fuentes.FUENTE_MENU,
                                          bg=PaletaColores.COLOR_INFO, fg=PaletaColores.BLANCO,
                                          relief="flat", cursor="hand2", padx=10,
                                          state="disabled", command=self.editar_insumo_servicio)
         self.btn_editar_ins.pack(side="left", padx=5)
         
-        self.btn_quitar_ins = tk.Button(frame_btns, text="🗑️ Quitar", font=Fuentes.FUENTE_MENU,
+        self.btn_quitar_ins = tk.Button(frame_btns, text="Quitar", font=Fuentes.FUENTE_MENU,
                                          bg=PaletaColores.COLOR_ERROR, fg=PaletaColores.BLANCO,
                                          relief="flat", cursor="hand2", padx=10,
                                          state="disabled", command=self.quitar_insumo_servicio)
@@ -390,7 +390,7 @@ class VentanaServicios:
             self.btn_editar.config(state="normal")
             self.btn_eliminar.config(state="normal")
             self.btn_agregar_ins.config(state="normal")
-            self.lbl_servicio_sel.config(text=f"📋 {v[1]}", fg=PaletaColores.DORADO_CARUMA)
+            self.lbl_servicio_sel.config(text=f"{v[1]}", fg=PaletaColores.DORADO_CARUMA)
             self.cargar_insumos_servicio()
         else:
             self.servicio_sel = None
@@ -413,7 +413,7 @@ class VentanaServicios:
     def form_nuevo(self):
         self.editando = False
         self.id_editando = None
-        self.lbl_titulo_form.config(text="➕ Nuevo Servicio")
+        self.lbl_titulo_form.config(text="Nuevo Servicio")
         self.ent_nombre.delete(0, tk.END)
         self.frame_form.pack(fill="x", pady=(0, 5))
         self.ent_nombre.focus_set()
@@ -425,7 +425,7 @@ class VentanaServicios:
         
         self.editando = True
         self.id_editando = self.servicio_sel["id"]
-        self.lbl_titulo_form.config(text="✏️ Editar Servicio")
+        self.lbl_titulo_form.config(text="Editar Servicio")
         self.ent_nombre.delete(0, tk.END)
         self.ent_nombre.insert(0, self.servicio_sel["nombre"])
         self.frame_form.pack(fill="x", pady=(0, 5))
@@ -494,7 +494,7 @@ class VentanaServicios:
         y = self.parent.winfo_y() + self.parent.winfo_height()//2 - 140
         dlg.geometry(f"+{x}+{y}")
         
-        tk.Label(dlg, text=f"📋 {self.servicio_sel['nombre']}", font=Fuentes.FUENTE_TEXTO_GRANDE,
+        tk.Label(dlg, text=f" {self.servicio_sel['nombre']}", font=Fuentes.FUENTE_TEXTO_GRANDE,
                  bg=PaletaColores.COLOR_FONDO, fg=PaletaColores.DORADO_CARUMA).pack(pady=(15, 10))
         
         # Frame de campos
@@ -571,10 +571,10 @@ class VentanaServicios:
             else:
                 messagebox.showerror("Error", msg)
         
-        tk.Button(frame_btns, text="💾 Agregar", font=Fuentes.FUENTE_BOTONES,
+        tk.Button(frame_btns, text="Agregar", font=Fuentes.FUENTE_BOTONES,
                   bg=PaletaColores.COLOR_EXITO, fg=PaletaColores.BLANCO,
                   relief="flat", padx=15, command=agregar).pack(side="left", padx=5)
-        tk.Button(frame_btns, text="❌ Cancelar", font=Fuentes.FUENTE_BOTONES,
+        tk.Button(frame_btns, text="Cancelar", font=Fuentes.FUENTE_BOTONES,
                   bg=PaletaColores.GRIS_MEDIO, fg=PaletaColores.BLANCO,
                   relief="flat", padx=15, command=dlg.destroy).pack(side="left", padx=5)
     
@@ -596,7 +596,7 @@ class VentanaServicios:
         y = self.parent.winfo_y() + self.parent.winfo_height()//2 - 110
         dlg.geometry(f"+{x}+{y}")
         
-        tk.Label(dlg, text=f"📦 {self.insumo_sel['nombre']}", font=Fuentes.FUENTE_TEXTO_GRANDE,
+        tk.Label(dlg, text=f" {self.insumo_sel['nombre']}", font=Fuentes.FUENTE_TEXTO_GRANDE,
                  bg=PaletaColores.COLOR_FONDO, fg=PaletaColores.DORADO_CARUMA).pack(pady=(15, 10))
         
         frame_campos = tk.Frame(dlg, bg=PaletaColores.COLOR_FONDO)
@@ -652,10 +652,10 @@ class VentanaServicios:
             else:
                 messagebox.showerror("Error", msg)
         
-        tk.Button(frame_btns, text="💾 Guardar", font=Fuentes.FUENTE_BOTONES,
+        tk.Button(frame_btns, text="Guardar", font=Fuentes.FUENTE_BOTONES,
                   bg=PaletaColores.COLOR_EXITO, fg=PaletaColores.BLANCO,
                   relief="flat", padx=15, command=guardar).pack(side="left", padx=5)
-        tk.Button(frame_btns, text="❌ Cancelar", font=Fuentes.FUENTE_BOTONES,
+        tk.Button(frame_btns, text="Cancelar", font=Fuentes.FUENTE_BOTONES,
                   bg=PaletaColores.GRIS_MEDIO, fg=PaletaColores.BLANCO,
                   relief="flat", padx=15, command=dlg.destroy).pack(side="left", padx=5)
     

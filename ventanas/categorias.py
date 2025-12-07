@@ -141,7 +141,7 @@ class VentanaCategorias:
         
         titulo = tk.Label(
             frame_titulo,
-            text="📋 Gestión de Categorías",
+            text="Gestión de Categorías",
             font=Fuentes.FUENTE_TITULOS,
             background=PaletaColores.COLOR_FONDO,
             foreground=PaletaColores.DORADO_CARUMA
@@ -175,7 +175,7 @@ class VentanaCategorias:
         
         tk.Label(
             frame_busqueda,
-            text="🔍 Buscar:",
+            text="Buscar:",
             font=Fuentes.FUENTE_TEXTO,
             background=PaletaColores.COLOR_FONDO,
             foreground=PaletaColores.COLOR_TEXTO_PRINCIPAL
@@ -188,7 +188,7 @@ class VentanaCategorias:
         # Botón limpiar búsqueda
         btn_limpiar = tk.Button(
             frame_busqueda,
-            text="✕",
+            text="X",
             font=Fuentes.FUENTE_TEXTO,
             background=PaletaColores.GRIS_CLARO,
             foreground=PaletaColores.GRIS_OSCURO,
@@ -208,7 +208,7 @@ class VentanaCategorias:
         # Botón agregar
         self.btn_agregar = GestorFormularios.crear_boton(
             frame_acciones,
-            "➕ Nueva Categoría",
+            "Nueva Categoría",
             self.mostrar_formulario_nuevo,
             ancho=18
         )
@@ -217,7 +217,7 @@ class VentanaCategorias:
         # Botón editar
         self.btn_editar = GestorFormularios.crear_boton(
             frame_acciones,
-            "✏️ Editar",
+            "Editar",
             self.mostrar_formulario_editar,
             ancho=12
         )
@@ -227,7 +227,7 @@ class VentanaCategorias:
         # Botón eliminar
         self.btn_eliminar = tk.Button(
             frame_acciones,
-            text="🗑️ Eliminar",
+            text="Eliminar",
             font=Fuentes.FUENTE_BOTONES,
             background=PaletaColores.COLOR_ERROR,
             foreground=PaletaColores.BLANCO,
@@ -368,7 +368,7 @@ class VentanaCategorias:
         
         self.btn_guardar = tk.Button(
             frame_botones_form,
-            text="💾 Guardar",
+            text="Guardar",
             font=Fuentes.FUENTE_BOTONES,
             background=PaletaColores.COLOR_EXITO,
             foreground=PaletaColores.BLANCO,
@@ -384,7 +384,7 @@ class VentanaCategorias:
         
         btn_cancelar = tk.Button(
             frame_botones_form,
-            text="❌ Cancelar",
+            text="Cancelar",
             font=Fuentes.FUENTE_BOTONES,
             background=PaletaColores.GRIS_MEDIO,
             foreground=PaletaColores.BLANCO,
@@ -446,7 +446,7 @@ class VentanaCategorias:
         """Muestra el formulario para nueva categoría"""
         self.editando = False
         self.id_editando = None
-        self.label_titulo_form.config(text="➕ Nueva Categoría")
+        self.label_titulo_form.config(text="Nueva Categoría")
         self.entrada_nombre.delete(0, tk.END)
         self.frame_formulario.pack(fill="x", pady=(0, 15))
         self.entrada_nombre.focus_set()
@@ -462,7 +462,7 @@ class VentanaCategorias:
         
         self.editando = True
         self.id_editando = self.categoria_seleccionada["id"]
-        self.label_titulo_form.config(text="✏️ Editar Categoría")
+        self.label_titulo_form.config(text="Editar Categoría")
         self.entrada_nombre.delete(0, tk.END)
         self.entrada_nombre.insert(0, self.categoria_seleccionada["nombre"])
         self.frame_formulario.pack(fill="x", pady=(0, 15))

@@ -8,7 +8,7 @@ from config.db_config import DB_CONFIG
 
 
 class Database:
-    _connection_pool = None
+    _connection_pool = None#Pool el conexiones en null
     
     @classmethod
     def initialize(cls):
@@ -90,4 +90,4 @@ class Database:
         """Cierra todas las conexiones del pool"""
         if cls._connection_pool:
             cls._connection_pool.closeall()
-            print("✓ Todas las conexiones cerradas")
+            print("Todas las conexiones cerradas")

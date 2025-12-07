@@ -1,6 +1,5 @@
 """
-Paleta de colores basada en la imagen de Caruma
-Colores extraídos: Negro, Dorado/Amarillo, Blanco
+Paleta de colores de Caruma
 """
 
 class PaletaColores:
@@ -21,7 +20,7 @@ class PaletaColores:
     COLOR_ERROR = "#DC3545"           # Rojo para errores
     COLOR_INFO = "#17A2B8"            # Azul para información
     
-    # Aplicación de colores
+    # Aplicación de colores. Para evitar redundancia
     COLOR_ENCABEZADO = DORADO_CARUMA
     COLOR_FONDO = BLANCO
     COLOR_FONDO_ALTERNO = GRIS_CLARO

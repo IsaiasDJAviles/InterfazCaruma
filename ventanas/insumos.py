@@ -189,7 +189,7 @@ class VentanaInsumos:
     def crear_titulo(self):
         frame = tk.Frame(self.frame_principal, bg=PaletaColores.COLOR_FONDO)
         frame.pack(fill="x", pady=(0, 15))
-        tk.Label(frame, text="📦 Gestión de Insumos", font=Fuentes.FUENTE_TITULOS,
+        tk.Label(frame, text="Gestión de Insumos", font=Fuentes.FUENTE_TITULOS,
                  bg=PaletaColores.COLOR_FONDO, fg=PaletaColores.DORADO_CARUMA).pack(side="left")
         self.lbl_contador = tk.Label(frame, text="", font=Fuentes.FUENTE_TEXTO,
                                       bg=PaletaColores.COLOR_FONDO, fg=PaletaColores.GRIS_MEDIO)
@@ -211,12 +211,12 @@ class VentanaInsumos:
         self.cmb_filtro.bind("<<ComboboxSelected>>", self.filtrar_categoria)
         self.actualizar_combo_filtro()
         
-        tk.Button(f1, text="⚠️ Stock Bajo", font=Fuentes.FUENTE_MENU, bg=PaletaColores.COLOR_ALERTA,
+        tk.Button(f1, text="Stock Bajo", font=Fuentes.FUENTE_MENU, bg=PaletaColores.COLOR_ALERTA,
                   relief="flat", cursor="hand2", command=self.ver_stock_bajo).pack(side="left", padx=3)
-        tk.Button(f1, text="📅 Por Caducar", font=Fuentes.FUENTE_MENU, bg=PaletaColores.COLOR_ERROR,
+        tk.Button(f1, text="Por Caducar", font=Fuentes.FUENTE_MENU, bg=PaletaColores.COLOR_ERROR,
                   fg=PaletaColores.BLANCO, relief="flat", cursor="hand2",
                   command=self.ver_por_caducar).pack(side="left", padx=3)
-        tk.Button(f1, text="📋 Todos", font=Fuentes.FUENTE_MENU, bg=PaletaColores.GRIS_CLARO,
+        tk.Button(f1, text="Todos", font=Fuentes.FUENTE_MENU, bg=PaletaColores.GRIS_CLARO,
                   relief="flat", cursor="hand2", command=self.cargar_insumos).pack(side="left", padx=3)
         
         # Fila 2: Botones de acción
@@ -228,18 +228,18 @@ class VentanaInsumos:
                                     padx=15, pady=8, command=self.form_nuevo)
         self.btn_nuevo.pack(side="left", padx=(0, 5))
         
-        self.btn_editar = tk.Button(f2, text="✏️ Editar", font=Fuentes.FUENTE_BOTONES,
+        self.btn_editar = tk.Button(f2, text="Editar", font=Fuentes.FUENTE_BOTONES,
                                      bg=PaletaColores.DORADO_CARUMA, relief="flat", cursor="hand2",
                                      padx=15, pady=8, state="disabled", command=self.form_editar)
         self.btn_editar.pack(side="left", padx=5)
         
-        self.btn_stock = tk.Button(f2, text="📊 Ajustar Stock", font=Fuentes.FUENTE_BOTONES,
+        self.btn_stock = tk.Button(f2, text="Ajustar Stock", font=Fuentes.FUENTE_BOTONES,
                                     bg=PaletaColores.COLOR_INFO, fg=PaletaColores.BLANCO,
                                     relief="flat", cursor="hand2", padx=15, pady=8,
                                     state="disabled", command=self.ajustar_stock)
         self.btn_stock.pack(side="left", padx=5)
         
-        self.btn_eliminar = tk.Button(f2, text="🗑️ Eliminar", font=Fuentes.FUENTE_BOTONES,
+        self.btn_eliminar = tk.Button(f2, text="Eliminar", font=Fuentes.FUENTE_BOTONES,
                                        bg=PaletaColores.COLOR_ERROR, fg=PaletaColores.BLANCO,
                                        relief="flat", cursor="hand2", padx=15, pady=8,
                                        state="disabled", command=self.eliminar)
@@ -324,12 +324,12 @@ class VentanaInsumos:
         frame_btns = tk.Frame(self.frame_form, bg=PaletaColores.GRIS_CLARO)
         frame_btns.grid(row=3, column=0, columnspan=8, pady=(12, 0))
         
-        tk.Button(frame_btns, text="💾 Guardar", font=Fuentes.FUENTE_BOTONES,
+        tk.Button(frame_btns, text="Guardar", font=Fuentes.FUENTE_BOTONES,
                   bg=PaletaColores.COLOR_EXITO, fg=PaletaColores.BLANCO,
                   relief="flat", cursor="hand2", padx=20, pady=6,
                   command=self.guardar).pack(side="left", padx=(0, 10))
         
-        tk.Button(frame_btns, text="❌ Cancelar", font=Fuentes.FUENTE_BOTONES,
+        tk.Button(frame_btns, text="Cancelar", font=Fuentes.FUENTE_BOTONES,
                   bg=PaletaColores.GRIS_MEDIO, fg=PaletaColores.BLANCO,
                   relief="flat", cursor="hand2", padx=20, pady=6,
                   command=self.ocultar_form).pack(side="left")
@@ -394,7 +394,7 @@ class VentanaInsumos:
         
         self.editando = True
         self.id_editando = ins[0]
-        self.lbl_titulo_form.config(text="✏️ Editar Insumo")
+        self.lbl_titulo_form.config(text="Editar Insumo")
         
         self.limpiar_form()
         self.ent_nombre.insert(0, ins[1])
@@ -549,7 +549,7 @@ class VentanaInsumos:
         y = self.parent.winfo_y() + self.parent.winfo_height()//2 - 85
         dlg.geometry(f"+{x}+{y}")
         
-        tk.Label(dlg, text=f"📦 {self.insumo_sel['nombre']}", font=Fuentes.FUENTE_TEXTO_GRANDE,
+        tk.Label(dlg, text=f"{self.insumo_sel['nombre']}", font=Fuentes.FUENTE_TEXTO_GRANDE,
                  bg=PaletaColores.COLOR_FONDO, fg=PaletaColores.DORADO_CARUMA).pack(pady=(12, 3))
         tk.Label(dlg, text=f"Stock actual: {self.insumo_sel['piezas']} piezas",
                  bg=PaletaColores.COLOR_FONDO).pack(pady=(0, 8))
@@ -581,11 +581,11 @@ class VentanaInsumos:
             else:
                 messagebox.showerror("Error", msg)
         
-        tk.Button(fb, text="➕ Agregar", font=Fuentes.FUENTE_BOTONES, bg=PaletaColores.COLOR_EXITO,
+        tk.Button(fb, text="Agregar", font=Fuentes.FUENTE_BOTONES, bg=PaletaColores.COLOR_EXITO,
                   fg=PaletaColores.BLANCO, relief="flat", padx=10, command=lambda: hacer('add')).pack(side="left", padx=3)
-        tk.Button(fb, text="➖ Restar", font=Fuentes.FUENTE_BOTONES, bg=PaletaColores.COLOR_ERROR,
+        tk.Button(fb, text="Restar", font=Fuentes.FUENTE_BOTONES, bg=PaletaColores.COLOR_ERROR,
                   fg=PaletaColores.BLANCO, relief="flat", padx=10, command=lambda: hacer('subtract')).pack(side="left", padx=3)
-        tk.Button(fb, text="📝 Establecer", font=Fuentes.FUENTE_BOTONES, bg=PaletaColores.COLOR_INFO,
+        tk.Button(fb, text="Establecer", font=Fuentes.FUENTE_BOTONES, bg=PaletaColores.COLOR_INFO,
                   fg=PaletaColores.BLANCO, relief="flat", padx=10, command=lambda: hacer('set')).pack(side="left", padx=3)
 
 

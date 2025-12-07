@@ -162,37 +162,37 @@ class AplicacionCaruma(tk.Tk):
             )
             boton.grid(row=fila, column=columna, padx=15, pady=15)
     
-    # ==================== MÓDULO DE CATEGORÍAS ====================
+    # ~~~~~~~~~~~~~~~~~~~ MÓDULO DE CATEGORÍAS ~~~~~~~~~~~~~~~~~~~
     def abrir_categorias(self):
         """Abre el módulo de gestión de categorías"""
         from ventanas.categorias import abrir_ventana_categorias
         abrir_ventana_categorias(self)
     
-    # ==================== MÓDULO DE INSUMOS ====================
+    # ~~~~~~~~~~~~~~~~~~~ MÓDULO DE INSUMOS ~~~~~~~~~~~~~~~~~~~
     def abrir_insumos(self):
         """Abre el módulo de gestión de insumos"""
         from ventanas.insumos import abrir_ventana_insumos
         abrir_ventana_insumos(self)
     
-    # ==================== MÓDULO DE SERVICIOS ====================
+    # ~~~~~~~~~~~~~~~~~~~ MÓDULO DE SERVICIOS ~~~~~~~~~~~~~~~~~~~
     def abrir_servicios(self):
         """Abre el módulo de gestión de servicios"""
         from ventanas.servicios import abrir_ventana_servicios
         abrir_ventana_servicios(self)
     
-    # ==================== MÓDULO DE INVENTARIO ====================
+    # ~~~~~~~~~~~~~~~~~~~ MÓDULO DE INVENTARIO ~~~~~~~~~~~~~~~~~~~
     def abrir_inventario(self):
         """Abre el módulo de gestión de inventario"""
         from ventanas.inventario import abrir_ventana_inventario
         abrir_ventana_inventario(self)
     
-    # ==================== MÓDULO DE ALERTAS ====================
+    # ~~~~~~~~~~~~~~~~~~~ MÓDULO DE ALERTAS ~~~~~~~~~~~~~~~~~~~
     def abrir_alertas(self):
         """Abre el módulo de alertas"""
         from ventanas.alertas import abrir_ventana_alertas
         abrir_ventana_alertas(self)
     
-    # ==================== AYUDA ====================
+    # ~~~~~~~~~~~~~~~~~~~ AYUDA ~~~~~~~~~~~~~~~~~~~
     
     def mostrar_manual(self):
         messagebox.showinfo(

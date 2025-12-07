@@ -172,11 +172,11 @@ class VentanaInventario:
     def crear_titulo(self):
         frame = tk.Frame(self.frame_principal, bg=PaletaColores.COLOR_FONDO)
         frame.pack(fill="x", pady=(0, 15))
-        tk.Label(frame, text="📊 Gestión de Inventario", font=Fuentes.FUENTE_TITULOS,
+        tk.Label(frame, text="Gestión de Inventario", font=Fuentes.FUENTE_TITULOS,
                  bg=PaletaColores.COLOR_FONDO, fg=PaletaColores.DORADO_CARUMA).pack(side="left")
         
         # Botón actualizar
-        tk.Button(frame, text="🔄 Actualizar", font=Fuentes.FUENTE_MENU,
+        tk.Button(frame, text="Actualizar", font=Fuentes.FUENTE_MENU,
                   bg=PaletaColores.DORADO_CARUMA, relief="flat", cursor="hand2",
                   padx=10, command=self.cargar_datos).pack(side="right")
     
@@ -228,11 +228,11 @@ class VentanaInventario:
                  bg=PaletaColores.COLOR_FONDO).pack(side="left", padx=(0, 5))
         
         filtros = [
-            ("📋 Todos", None),
-            ("⚠️ Stock Bajo", "stock_bajo"),
-            ("📅 Por Caducar", "por_caducar"),
-            ("❌ Caducados", "caducados"),
-            ("📭 Sin Stock", "sin_stock")
+            ("Todos", None),
+            ("Stock Bajo", "stock_bajo"),
+            ("Por Caducar", "por_caducar"),
+            ("Caducados", "caducados"),
+            ("Sin Stock", "sin_stock")
         ]
         
         self.btns_filtro = {}
@@ -325,11 +325,11 @@ class VentanaInventario:
         
         # Crear tarjetas
         tarjetas_config = [
-            ("Total Insumos", total_insumos, PaletaColores.GRIS_CLARO, PaletaColores.NEGRO_CARUMA, "📦", None),
-            ("Total Piezas", total_piezas, PaletaColores.COLOR_INFO, PaletaColores.BLANCO, "🔢", None),
-            ("Stock Bajo", stock_bajo, PaletaColores.COLOR_ERROR, PaletaColores.BLANCO, "⚠️", lambda: self.aplicar_filtro("stock_bajo")),
-            ("Por Caducar", por_caducar, PaletaColores.COLOR_ALERTA, PaletaColores.NEGRO_CARUMA, "📅", lambda: self.aplicar_filtro("por_caducar")),
-            ("Caducados", caducados, "#9C27B0", PaletaColores.BLANCO, "❌", lambda: self.aplicar_filtro("caducados")),
+            ("Total Insumos", total_insumos, PaletaColores.GRIS_CLARO, PaletaColores.NEGRO_CARUMA, None),
+            ("Total Piezas", total_piezas, PaletaColores.COLOR_INFO, PaletaColores.BLANCO, None),
+            ("Stock Bajo", stock_bajo, PaletaColores.COLOR_ERROR, PaletaColores.BLANCO, lambda: self.aplicar_filtro("stock_bajo")),
+            ("Por Caducar", por_caducar, PaletaColores.COLOR_ALERTA, PaletaColores.NEGRO_CARUMA, lambda: self.aplicar_filtro("por_caducar")),
+            ("Caducados", caducados, "#9C27B0", PaletaColores.BLANCO, lambda: self.aplicar_filtro("caducados")),
         ]
         
         for titulo, valor, bg, fg, icono, cmd in tarjetas_config:
@@ -425,7 +425,7 @@ class VentanaInventarioDetalle:
         y = parent.winfo_y() + parent.winfo_height()//2 - 200
         dlg.geometry(f"+{x}+{y}")
         
-        tk.Label(dlg, text="📊 Inventario por Categorías", font=Fuentes.FUENTE_TITULOS,
+        tk.Label(dlg, text="Inventario por Categorías", font=Fuentes.FUENTE_TITULOS,
                  bg=PaletaColores.COLOR_FONDO, fg=PaletaColores.DORADO_CARUMA).pack(pady=15)
         
         # Tabla
