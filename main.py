@@ -3,6 +3,9 @@ SISTEMA DE GESTIÓN DE INSUMOS - CARUMA
 Aplicación principal con Tkinter
 """
 
+import os
+import platform
+import subprocess
 import tkinter as tk
 from tkinter import messagebox
 import sys
@@ -193,13 +196,30 @@ class AplicacionCaruma(tk.Tk):
         abrir_ventana_alertas(self)
     
     # ~~~~~~~~~~~~~~~~~~~ AYUDA ~~~~~~~~~~~~~~~~~~~
-    
     def mostrar_manual(self):
-        messagebox.showinfo(
-            "Manual de Usuario",
-            "Manual de usuario en desarrollo.\n\n" +
-            "Consulte la documentación en docs/manual_usuario.md"
-        )
+        """Abre el manual de usuario en PDF"""
+        pdf_path = os.path.join("docs", "Manual_Usuario_CARUMA.pdf")
+        
+        if not os.path.exists(pdf_path):
+            messagebox.showerror(
+                "Archivo no encontrado",
+                f"No se encontró el manual de usuario en:\n{pdf_path}"
+            )
+            return
+        
+        try:
+            # Detectar el sistema operativo y abrir el PDF
+            if platform.system() == 'Windows':
+                os.startfile(pdf_path)
+            elif platform.system() == 'Darwin':  # macOS
+                subprocess.run(['open', pdf_path])
+            else:  # Linux
+                subprocess.run(['xdg-open', pdf_path])
+        except Exception as e:
+            messagebox.showerror(
+                "Error al abrir PDF",
+                f"No se pudo abrir el archivo:\n{str(e)}"
+            )
     
     def mostrar_acerca_de(self):
         messagebox.showinfo(
