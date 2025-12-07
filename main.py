@@ -186,10 +186,13 @@ class AplicacionCaruma(tk.Tk):
         from ventanas.inventario import abrir_ventana_inventario
         abrir_ventana_inventario(self)
     
-    # ==================== MÓDULOS EN DESARROLLO ====================
-    
+    # ==================== MÓDULO DE ALERTAS ====================
     def abrir_alertas(self):
-        messagebox.showinfo("En desarrollo", "Módulo de Alertas en desarrollo")
+        """Abre el módulo de alertas"""
+        from ventanas.alertas import abrir_ventana_alertas
+        abrir_ventana_alertas(self)
+    
+    # ==================== AYUDA ====================
     
     def mostrar_manual(self):
         messagebox.showinfo(
@@ -203,9 +206,10 @@ class AplicacionCaruma(tk.Tk):
             "Acerca de Caruma",
             f"{TITULO_WINDOW}\n\n" +
             f"Versión: {VERSION}\n" +
-            f"Autor: {AUTOR}\n\n" +
-            "Sistema de gestión de insumos para barras de smoothies,\n" +
-            "chicharrones preparados, tostitos preparados y más."
+            f"Autor: {AUTORES}\n\n" +
+            "Sistema de gestión para Caruma Barras.\n" +
+            "Ambiente, calidad y atención en cada detalle."
+            "Porque cada fiesta merece algo especial."
         )
     
     def cerrar_aplicacion(self):

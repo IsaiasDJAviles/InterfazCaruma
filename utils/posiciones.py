@@ -2,6 +2,8 @@
 Posiciones y frames base para las ventanas
 """
 
+import os
+import sys
 import tkinter as tk
 from estilos.colores import PaletaColores
 
