@@ -34,7 +34,7 @@ class AlertasCRUD:
                 WHERE i.piezas <= i.alerta_piezas AND i.alerta_piezas > 0
                 ORDER BY (i.alerta_piezas - i.piezas) DESC
             """
-            return Database.execute_query(query)
+            return Database.ejecutar_query(query)
         except Exception as e:
             print(f"Error: {e}")
             return []
@@ -50,15 +50,15 @@ class AlertasCRUD:
                     COALESCE(c.nombre, 'Sin categoría') as categoria,
                     i.piezas,
                     i.fecha_caducidad,
-                    i.fecha_caducidad - CURRENT_DATE as dias_restantes
+                    CAST(julianday(i.fecha_caducidad) - julianday('now') AS INTEGER) AS dias_restantes
                 FROM insumos i
                 LEFT JOIN categorias c ON i.id_categoria = c.id
                 WHERE i.fecha_caducidad IS NOT NULL 
-                  AND i.fecha_caducidad >= CURRENT_DATE
-                  AND i.fecha_caducidad <= CURRENT_DATE + %s
-                ORDER BY i.fecha_caducidad ASC
+                AND date(i.fecha_caducidad) >= date('now')
+                AND date(i.fecha_caducidad) <= date('now', '+' || ? || ' days')
+                ORDER BY date(i.fecha_caducidad) ASC
             """
-            return Database.execute_query(query, (dias,))
+            return Database.ejecutar_query(query, (dias,))
         except Exception as e:
             print(f"Error: {e}")
             return []
@@ -74,14 +74,15 @@ class AlertasCRUD:
                     COALESCE(c.nombre, 'Sin categoría') as categoria,
                     i.piezas,
                     i.fecha_caducidad,
-                    CURRENT_DATE - i.fecha_caducidad as dias_caducado
+                    CAST(julianday('now') - julianday(i.fecha_caducidad) AS INTEGER) AS dias_caducado
                 FROM insumos i
                 LEFT JOIN categorias c ON i.id_categoria = c.id
                 WHERE i.fecha_caducidad IS NOT NULL 
-                  AND i.fecha_caducidad < CURRENT_DATE
-                ORDER BY i.fecha_caducidad ASC
+                AND date(i.fecha_caducidad) < date('now')
+                ORDER BY date(i.fecha_caducidad) ASC
             """
-            return Database.execute_query(query)
+
+            return Database.ejecutar_query(query)
         except Exception as e:
             print(f"Error: {e}")
             return []
@@ -92,15 +93,15 @@ class AlertasCRUD:
         try:
             query = """
                 SELECT 
-                    COUNT(CASE WHEN piezas <= alerta_piezas AND alerta_piezas > 0 THEN 1 END) as stock_bajo,
-                    COUNT(CASE WHEN fecha_caducidad IS NOT NULL 
-                          AND fecha_caducidad >= CURRENT_DATE 
-                          AND fecha_caducidad <= CURRENT_DATE + 7 THEN 1 END) as por_caducar,
-                    COUNT(CASE WHEN fecha_caducidad IS NOT NULL 
-                          AND fecha_caducidad < CURRENT_DATE THEN 1 END) as caducados
+                    SUM(CASE WHEN piezas <= alerta_piezas AND alerta_piezas > 0 THEN 1 ELSE 0 END) AS stock_bajo,
+                    SUM(CASE WHEN fecha_caducidad IS NOT NULL
+                        AND date(fecha_caducidad) >= date('now')
+                        AND date(fecha_caducidad) <= date('now', '+7 days') THEN 1 ELSE 0 END) AS por_caducar,
+                    SUM(CASE WHEN fecha_caducidad IS NOT NULL
+                        AND date(fecha_caducidad) < date('now') THEN 1 ELSE 0 END) AS caducados
                 FROM insumos
             """
-            resultado = Database.execute_query(query)
+            resultado = Database.ejecutar_query(query)
             return resultado[0] if resultado else (0, 0, 0)
         except:
             return (0, 0, 0)
@@ -111,9 +112,10 @@ class AlertasCRUD:
         try:
             query = """
                 INSERT INTO alertas (id_insumo, tipo, mensaje, fecha_alerta)
-                VALUES (%s, %s, %s, CURRENT_DATE)
+                VALUES (?, ?, ?, date('now'))
             """
-            Database.execute_update(query, (id_insumo, tipo, mensaje))
+
+            Database.ejecutar_comando(query, (id_insumo, tipo, mensaje))
             return True
         except:
             return False
@@ -131,10 +133,10 @@ class AlertasCRUD:
                     a.mensaje
                 FROM alertas a
                 JOIN insumos i ON a.id_insumo = i.id
-                ORDER BY a.fecha_alerta DESC, a.id DESC
-                LIMIT %s
+                ORDER BY date(a.fecha_alerta) DESC, a.id DESC
+                LIMIT ?
             """
-            return Database.execute_query(query, (limite,))
+            return Database.ejecutar_query(query, (limite,))
         except:
             return []
     
@@ -142,7 +144,7 @@ class AlertasCRUD:
     def limpiar_historial():
         """Limpia el historial de alertas"""
         try:
-            Database.execute_update("DELETE FROM alertas")
+            Database.ejecutar_comando("DELETE FROM alertas")
             return True, "Historial limpiado"
         except Exception as e:
             return False, f"Error: {e}"
@@ -493,7 +495,7 @@ class VentanaAlertas:
         datos = AlertasCRUD.obtener_alertas_caducados()
         
         for d in datos:
-            fecha_str = d[4].strftime("%Y-%m-%d") if d[4] else ""
+            fecha_str = d[4] if isinstance(d[4], str) else ""
             self.tabla_caducados.insert("", "end", values=(
                 d[0], d[1], d[2], d[3], fecha_str, d[5]
             ), tags=("caducado",))
@@ -632,14 +634,14 @@ class VentanaAlertas:
         if por_caducar:
             reporte += f"POR CADUCAR (7 días)\n{'-'*50}\n"
             for d in por_caducar:
-                reporte += f"  • {d[1]} - Caduca: {d[4].strftime('%Y-%m-%d')}\n"
+                reporte += f"  • {d[1]} - Caduca: {d[4]}\n"
                 reporte += f"    Stock: {d[3]} piezas ({d[5]} días restantes)\n"
             reporte += "\n"
         
         if caducados:
             reporte += f"CADUCADOS (URGENTE)\n{'-'*50}\n"
             for d in caducados:
-                reporte += f"  • {d[1]} - Caducó: {d[4].strftime('%Y-%m-%d')}\n"
+                reporte += f"  • {d[1]} - Caducó: {d[4]}\n"
                 reporte += f"    Stock a retirar: {d[3]} piezas\n"
             reporte += "\n"
         

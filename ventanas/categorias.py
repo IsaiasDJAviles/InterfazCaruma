@@ -21,7 +21,7 @@ class CategoriasCRUD:
         """Obtiene todas las categorías de la base de datos"""
         try:
             query = "SELECT id, nombre FROM categorias ORDER BY nombre"
-            resultado = Database.execute_query(query)
+            resultado = Database.ejecutar_query(query)
             return resultado
         except Exception as e:
             print(f"Error al obtener categorías: {e}")
@@ -31,8 +31,8 @@ class CategoriasCRUD:
     def obtener_por_id(id_categoria):
         """Obtiene una categoría por su ID"""
         try:
-            query = "SELECT id, nombre FROM categorias WHERE id = %s"
-            resultado = Database.execute_query(query, (id_categoria,))
+            query = "SELECT id, nombre FROM categorias WHERE id = ?"
+            resultado = Database.ejecutar_query(query, (id_categoria,))
             return resultado[0] if resultado else None
         except Exception as e:
             print(f"Error al obtener categoría: {e}")
@@ -42,8 +42,8 @@ class CategoriasCRUD:
     def crear(nombre):
         """Crea una nueva categoría"""
         try:
-            query = "INSERT INTO categorias (nombre) VALUES (%s)"
-            Database.execute_update(query, (nombre.strip(),))
+            query = "INSERT INTO categorias (nombre) VALUES (?)"
+            Database.ejecutar_comando(query, (nombre.strip(),))
             return True, "Categoría creada exitosamente"
         except Exception as e:
             if "unique" in str(e).lower() or "duplicate" in str(e).lower():
@@ -54,8 +54,8 @@ class CategoriasCRUD:
     def actualizar(id_categoria, nombre):
         """Actualiza una categoría existente"""
         try:
-            query = "UPDATE categorias SET nombre = %s WHERE id = %s"
-            Database.execute_update(query, (nombre.strip(), id_categoria))
+            query = "UPDATE categorias SET nombre = ? WHERE id = ?"
+            Database.ejecutar_comando(query, (nombre.strip(), id_categoria))
             return True, "Categoría actualizada exitosamente"
         except Exception as e:
             if "unique" in str(e).lower() or "duplicate" in str(e).lower():
@@ -67,14 +67,14 @@ class CategoriasCRUD:
         """Elimina una categoría"""
         try:
             # Verificar si tiene insumos asociados
-            query_check = "SELECT COUNT(*) FROM insumos WHERE id_categoria = %s"
-            resultado = Database.execute_query(query_check, (id_categoria,))
+            query_check = "SELECT COUNT(*) FROM insumos WHERE id_categoria = ?"
+            resultado = Database.ejecutar_query(query_check, (id_categoria,))
             
             if resultado and resultado[0][0] > 0:
                 return False, "No se puede eliminar: la categoría tiene insumos asociados"
             
-            query = "DELETE FROM categorias WHERE id = %s"
-            Database.execute_update(query, (id_categoria,))
+            query = "DELETE FROM categorias WHERE id = ?"
+            Database.ejecutar_comando(query, (id_categoria,))
             return True, "Categoría eliminada exitosamente"
         except Exception as e:
             return False, f"Error al eliminar categoría: {e}"
@@ -83,8 +83,8 @@ class CategoriasCRUD:
     def buscar(termino):
         """Busca categorías por nombre"""
         try:
-            query = "SELECT id, nombre FROM categorias WHERE nombre ILIKE %s ORDER BY nombre"
-            resultado = Database.execute_query(query, (f"%{termino}%",))
+            query = "SELECT id, nombre FROM categorias WHERE nombre LIKE ? COLLATE NOCASE ORDER BY nombre"
+            resultado = Database.ejecutar_query(query, (f"%{termino}%",))
             return resultado
         except Exception as e:
             print(f"Error al buscar categorías: {e}")
@@ -414,7 +414,7 @@ class VentanaCategorias:
         
         # Insertar en tabla
         for categoria in categorias:
-            self.tabla.insert("", "end", values=categoria)
+            self.tabla.insert("", "end", values=(categoria['id'], categoria['nombre'])) 
         
         # Actualizar contador
         total = len(categorias)

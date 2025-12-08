@@ -27,7 +27,7 @@ class InsumosCRUD:
                 FROM insumos i LEFT JOIN categorias c ON i.id_categoria = c.id
                 ORDER BY i.nombre
             """
-            return Database.execute_query(query)
+            return Database.ejecutar_query(query)
         except Exception as e:
             print(f"Error: {e}")
             return []
@@ -37,8 +37,8 @@ class InsumosCRUD:
         try:
             query = """SELECT id, nombre, id_categoria, piezas, contenido_por_pieza,
                        unidad_contenido, fecha_caducidad, alerta_piezas
-                       FROM insumos WHERE id = %s"""
-            resultado = Database.execute_query(query, (id_insumo,))
+                       FROM insumos WHERE id = ?"""
+            resultado = Database.ejecutar_query(query, (id_insumo,))
             return resultado[0] if resultado else None
         except Exception as e:
             print(f"Error: {e}")
@@ -49,8 +49,8 @@ class InsumosCRUD:
         try:
             query = """INSERT INTO insumos (nombre, id_categoria, piezas, contenido_por_pieza,
                        unidad_contenido, fecha_caducidad, alerta_piezas)
-                       VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-            Database.execute_update(query, (nombre.strip(), id_categoria or None, piezas,
+                       VALUES (?, ?, ?, ?, ?, ?, ?)"""
+            Database.ejecutar_comando(query, (nombre.strip(), id_categoria or None, piezas,
                                             contenido or None, unidad or None, fecha_cad or None, alerta))
             return True, "Insumo creado exitosamente"
         except Exception as e:
@@ -61,10 +61,10 @@ class InsumosCRUD:
     @staticmethod
     def actualizar(id_insumo, nombre, id_categoria, piezas, contenido, unidad, fecha_cad, alerta):
         try:
-            query = """UPDATE insumos SET nombre=%s, id_categoria=%s, piezas=%s,
-                       contenido_por_pieza=%s, unidad_contenido=%s, fecha_caducidad=%s,
-                       alerta_piezas=%s WHERE id=%s"""
-            Database.execute_update(query, (nombre.strip(), id_categoria or None, piezas,
+            query = """UPDATE insumos SET nombre=?, id_categoria=?, piezas=?,
+                       contenido_por_pieza=?, unidad_contenido=?, fecha_caducidad=?,
+                       alerta_piezas=? WHERE id=?"""
+            Database.ejecutar_comando(query, (nombre.strip(), id_categoria or None, piezas,
                                             contenido or None, unidad or None, fecha_cad or None,
                                             alerta, id_insumo))
             return True, "Insumo actualizado exitosamente"
@@ -76,11 +76,11 @@ class InsumosCRUD:
     @staticmethod
     def eliminar(id_insumo):
         try:
-            check = Database.execute_query("SELECT COUNT(*) FROM servicio_insumo WHERE id_insumo=%s", (id_insumo,))
+            check = Database.ejecutar_query("SELECT COUNT(*) FROM servicio_insumo WHERE id_insumo=?", (id_insumo,))
             if check and check[0][0] > 0:
                 return False, "El insumo está asociado a servicios"
-            Database.execute_update("DELETE FROM alertas WHERE id_insumo=%s", (id_insumo,))
-            Database.execute_update("DELETE FROM insumos WHERE id=%s", (id_insumo,))
+            Database.ejecutar_comando("DELETE FROM alertas WHERE id_insumo=?", (id_insumo,))
+            Database.ejecutar_comando("DELETE FROM insumos WHERE id=?", (id_insumo,))
             return True, "Insumo eliminado exitosamente"
         except Exception as e:
             return False, f"Error: {e}"
@@ -92,8 +92,8 @@ class InsumosCRUD:
                        i.piezas, i.contenido_por_pieza, i.unidad_contenido,
                        i.fecha_caducidad, i.alerta_piezas, i.id_categoria
                        FROM insumos i LEFT JOIN categorias c ON i.id_categoria = c.id
-                       WHERE i.nombre ILIKE %s OR c.nombre ILIKE %s ORDER BY i.nombre"""
-            return Database.execute_query(query, (f"%{termino}%", f"%{termino}%"))
+                       WHERE i.nombre LIKE ? COLLATE NOCASE OR c.nombre LIKE ? COLLATE NOCASE ORDER BY i.nombre"""
+            return Database.ejecutar_query(query, (f"%{termino}%", f"%{termino}%"))
         except:
             return []
     
@@ -106,8 +106,8 @@ class InsumosCRUD:
                        i.piezas, i.contenido_por_pieza, i.unidad_contenido,
                        i.fecha_caducidad, i.alerta_piezas, i.id_categoria
                        FROM insumos i LEFT JOIN categorias c ON i.id_categoria = c.id
-                       WHERE i.id_categoria = %s ORDER BY i.nombre"""
-            return Database.execute_query(query, (id_cat,))
+                       WHERE i.id_categoria = ? ORDER BY i.nombre"""
+            return Database.ejecutar_query(query, (id_cat,))
         except:
             return []
     
@@ -120,21 +120,22 @@ class InsumosCRUD:
                        FROM insumos i LEFT JOIN categorias c ON i.id_categoria = c.id
                        WHERE i.piezas <= i.alerta_piezas AND i.alerta_piezas > 0
                        ORDER BY i.piezas"""
-            return Database.execute_query(query)
+            return Database.ejecutar_query(query)
         except:
             return []
     
     @staticmethod
     def obtener_por_caducar(dias=7):
         try:
-            query = """SELECT i.id, i.nombre, COALESCE(c.nombre, 'Sin categoría'),
-                       i.piezas, i.contenido_por_pieza, i.unidad_contenido,
-                       i.fecha_caducidad, i.alerta_piezas, i.id_categoria
-                       FROM insumos i LEFT JOIN categorias c ON i.id_categoria = c.id
-                       WHERE i.fecha_caducidad IS NOT NULL 
-                       AND i.fecha_caducidad <= CURRENT_DATE + %s
-                       AND i.fecha_caducidad >= CURRENT_DATE ORDER BY i.fecha_caducidad"""
-            return Database.execute_query(query, (dias,))
+            query = """SELECT i.id, i.nombre, COALESCE(c.nombre, 'Sin categoría') as categoria,
+                   i.piezas, i.contenido_por_pieza, i.unidad_contenido,
+                   i.fecha_caducidad, i.alerta_piezas, i.id_categoria
+                   FROM insumos i LEFT JOIN categorias c ON i.id_categoria = c.id
+                   WHERE i.fecha_caducidad IS NOT NULL 
+                   AND i.fecha_caducidad <= date('now', '+' || ? || ' days')
+                   AND i.fecha_caducidad >= date('now') 
+                   ORDER BY i.fecha_caducidad""" 
+            return Database.ejecutar_query(query, (dias,))
         except:
             return []
     
@@ -142,12 +143,12 @@ class InsumosCRUD:
     def actualizar_piezas(id_insumo, cantidad, op='set'):
         try:
             if op == 'add':
-                q = "UPDATE insumos SET piezas = piezas + %s WHERE id = %s"
+                q = "UPDATE insumos SET piezas = piezas + ? WHERE id = ?"
             elif op == 'subtract':
-                q = "UPDATE insumos SET piezas = GREATEST(0, piezas - %s) WHERE id = %s"
+                q = "UPDATE insumos SET piezas = GREATEST(0, piezas - ?) WHERE id = ?"
             else:
-                q = "UPDATE insumos SET piezas = %s WHERE id = %s"
-            Database.execute_update(q, (cantidad, id_insumo))
+                q = "UPDATE insumos SET piezas = ? WHERE id = ?"
+            Database.ejecutar_comando(q, (cantidad, id_insumo))
             return True, "Stock actualizado"
         except Exception as e:
             return False, f"Error: {e}"
@@ -182,7 +183,7 @@ class VentanaInsumos:
     
     def cargar_categorias(self):
         try:
-            self.categorias = Database.execute_query("SELECT id, nombre FROM categorias ORDER BY nombre")
+            self.categorias = Database.ejecutar_query("SELECT id, nombre FROM categorias ORDER BY nombre")
         except:
             self.categorias = []
     
@@ -340,6 +341,7 @@ class VentanaInsumos:
         self.cmb_cat.current(0)
     
     def cargar_insumos(self, datos=None):
+    # Limpiar tabla
         for i in self.tabla.get_children():
             self.tabla.delete(i)
         
@@ -347,23 +349,60 @@ class VentanaInsumos:
             datos = InsumosCRUD.obtener_todos()
         
         hoy = date.today()
+
         for ins in datos:
+            # ins es una tupla, así que usamos índices
+            pzas = ins[3]
+            contenido = ins[4]
+            unidad = ins[5]
+            fec = ins[6]
+            alerta = ins[7]
+
             tags = []
-            pzas, alerta, fec = ins[3] or 0, ins[7] or 0, ins[6]
-            if alerta > 0 and pzas <= alerta:
+
+            # --- STOCK BAJO ---
+            if alerta and pzas is not None and pzas <= alerta:
                 tags.append("stock_bajo")
-            if fec and 0 <= (fec - hoy).days <= 7:
-                tags.append("por_caducar")
-            
-            fec_str = fec.strftime("%Y-%m-%d") if fec else ""
-            self.tabla.insert("", "end", values=(ins[0], ins[1], ins[2], pzas,
-                              ins[4] or "", ins[5] or "", fec_str, alerta), tags=tags)
-        
+
+            # --- POR CADUCAR ---
+            fec_str = ""
+            if fec:
+                try:
+                    if isinstance(fec, str):
+                        fec = datetime.strptime(fec, "%Y-%m-%d").date()
+
+                    dias = (fec - hoy).days
+                    if 0 <= dias <= 7:
+                        tags.append("por_caducar")
+
+                    fec_str = fec.strftime("%Y-%m-%d")
+                except:
+                    fec_str = fec
+
+            # Insertar fila final
+            self.tabla.insert(
+                "",
+                "end",
+                values=(
+                    ins[0],   # id
+                    ins[1],   # nombre
+                    ins[2],   # categoria
+                    pzas,
+                    contenido or "",
+                    unidad or "",
+                    fec_str,
+                    alerta
+                ),
+                tags=tags
+            )
+
+        # Actualizar contador y botones
         self.lbl_contador.config(text=f"{len(datos)} insumo{'s' if len(datos)!=1 else ''}")
         self.insumo_sel = None
         self.btn_editar.config(state="disabled")
         self.btn_eliminar.config(state="disabled")
         self.btn_stock.config(state="disabled")
+
     
     def on_select(self, e):
         sel = self.tabla.selection()

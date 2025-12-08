@@ -24,7 +24,7 @@ class ServiciosCRUD:
                     (SELECT COUNT(*) FROM servicio_insumo si WHERE si.id_servicio = s.id) as num_insumos
                 FROM servicios s ORDER BY s.nombre
             """
-            return Database.execute_query(query)
+            return Database.ejecutar_query(query)
         except Exception as e:
             print(f"Error: {e}")
             return []
@@ -32,8 +32,8 @@ class ServiciosCRUD:
     @staticmethod
     def obtener_por_id(id_servicio):
         try:
-            query = "SELECT id, nombre FROM servicios WHERE id = %s"
-            resultado = Database.execute_query(query, (id_servicio,))
+            query = "SELECT id, nombre FROM servicios WHERE id = ?"
+            resultado = Database.ejecutar_query(query, (id_servicio,))
             return resultado[0] if resultado else None
         except Exception as e:
             print(f"Error: {e}")
@@ -42,8 +42,8 @@ class ServiciosCRUD:
     @staticmethod
     def crear(nombre):
         try:
-            query = "INSERT INTO servicios (nombre) VALUES (%s)"
-            Database.execute_update(query, (nombre.strip(),))
+            query = "INSERT INTO servicios (nombre) VALUES (?)"
+            Database.ejecutar_comando(query, (nombre.strip(),))
             return True, "Servicio creado exitosamente"
         except Exception as e:
             if "unique" in str(e).lower():
@@ -53,8 +53,8 @@ class ServiciosCRUD:
     @staticmethod
     def actualizar(id_servicio, nombre):
         try:
-            query = "UPDATE servicios SET nombre = %s WHERE id = %s"
-            Database.execute_update(query, (nombre.strip(), id_servicio))
+            query = "UPDATE servicios SET nombre = ? WHERE id = ?"
+            Database.ejecutar_comando(query, (nombre.strip(), id_servicio))
             return True, "Servicio actualizado exitosamente"
         except Exception as e:
             if "unique" in str(e).lower():
@@ -65,8 +65,8 @@ class ServiciosCRUD:
     def eliminar(id_servicio):
         try:
             # Las relaciones se eliminan en cascada por la FK
-            query = "DELETE FROM servicios WHERE id = %s"
-            Database.execute_update(query, (id_servicio,))
+            query = "DELETE FROM servicios WHERE id = ?"
+            Database.ejecutar_comando(query, (id_servicio,))
             return True, "Servicio eliminado exitosamente"
         except Exception as e:
             return False, f"Error: {e}"
@@ -77,11 +77,15 @@ class ServiciosCRUD:
             query = """
                 SELECT s.id, s.nombre,
                     (SELECT COUNT(*) FROM servicio_insumo si WHERE si.id_servicio = s.id) as num_insumos
-                FROM servicios s WHERE s.nombre ILIKE %s ORDER BY s.nombre
+                FROM servicios s 
+                WHERE s.nombre LIKE ? COLLATE NOCASE 
+                ORDER BY s.nombre
             """
-            return Database.execute_query(query, (f"%{termino}%",))
-        except:
+            return Database.ejecutar_query(query, (f"%{termino}%",))
+        except Exception as e:
+            print("Error búsqueda:", e)
             return []
+
 
 
 class ServicioInsumoCRUD:
@@ -96,10 +100,10 @@ class ServicioInsumoCRUD:
                        si.piezas_por_servicio, si.contenido_por_servicio, si.unidad_contenido
                 FROM servicio_insumo si
                 JOIN insumos i ON si.id_insumo = i.id
-                WHERE si.id_servicio = %s
+                WHERE si.id_servicio = ?
                 ORDER BY i.nombre
             """
-            return Database.execute_query(query, (id_servicio,))
+            return Database.ejecutar_query(query, (id_servicio,))
         except Exception as e:
             print(f"Error: {e}")
             return []
@@ -109,7 +113,7 @@ class ServicioInsumoCRUD:
         """Obtiene todos los insumos disponibles para agregar"""
         try:
             query = "SELECT id, nombre, unidad_contenido FROM insumos ORDER BY nombre"
-            return Database.execute_query(query)
+            return Database.ejecutar_query(query)
         except:
             return []
     
@@ -118,8 +122,8 @@ class ServicioInsumoCRUD:
         """Agrega un insumo a un servicio"""
         try:
             # Verificar si ya existe la relación
-            check = Database.execute_query(
-                "SELECT id FROM servicio_insumo WHERE id_servicio=%s AND id_insumo=%s",
+            check = Database.ejecutar_query(
+                "SELECT id FROM servicio_insumo WHERE id_servicio=? AND id_insumo=?",
                 (id_servicio, id_insumo))
             if check:
                 return False, "Este insumo ya está agregado al servicio"
@@ -127,9 +131,9 @@ class ServicioInsumoCRUD:
             query = """
                 INSERT INTO servicio_insumo (id_servicio, id_insumo, piezas_por_servicio, 
                                              contenido_por_servicio, unidad_contenido)
-                VALUES (%s, %s, %s, %s, %s)
+                VALUES (?, ?, ?, ?, ?)
             """
-            Database.execute_update(query, (id_servicio, id_insumo, piezas or None,
+            Database.ejecutar_comando(query, (id_servicio, id_insumo, piezas or None,
                                             contenido or None, unidad or None))
             return True, "Insumo agregado al servicio"
         except Exception as e:
@@ -140,11 +144,11 @@ class ServicioInsumoCRUD:
         """Actualiza la cantidad de insumo en un servicio"""
         try:
             query = """
-                UPDATE servicio_insumo SET piezas_por_servicio=%s, 
-                       contenido_por_servicio=%s, unidad_contenido=%s
-                WHERE id = %s
+                UPDATE servicio_insumo SET piezas_por_servicio=?, 
+                       contenido_por_servicio=?, unidad_contenido=?
+                WHERE id = ?
             """
-            Database.execute_update(query, (piezas or None, contenido or None, unidad or None, id_relacion))
+            Database.ejecutar_comando(query, (piezas or None, contenido or None, unidad or None, id_relacion))
             return True, "Cantidad actualizada"
         except Exception as e:
             return False, f"Error: {e}"
@@ -153,8 +157,8 @@ class ServicioInsumoCRUD:
     def eliminar_insumo(id_relacion):
         """Elimina un insumo de un servicio"""
         try:
-            query = "DELETE FROM servicio_insumo WHERE id = %s"
-            Database.execute_update(query, (id_relacion,))
+            query = "DELETE FROM servicio_insumo WHERE id = ?"
+            Database.ejecutar_comando(query, (id_relacion,))
             return True, "Insumo eliminado del servicio"
         except Exception as e:
             return False, f"Error: {e}"

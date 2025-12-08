@@ -27,13 +27,13 @@ class InventarioCRUD:
                     COALESCE(SUM(piezas), 0) as total_piezas,
                     COUNT(CASE WHEN piezas <= alerta_piezas AND alerta_piezas > 0 THEN 1 END) as stock_bajo,
                     COUNT(CASE WHEN fecha_caducidad IS NOT NULL 
-                          AND fecha_caducidad <= CURRENT_DATE + 7 
-                          AND fecha_caducidad >= CURRENT_DATE THEN 1 END) as por_caducar,
+                        AND fecha_caducidad <= date('now', '+7 days')
+                        AND fecha_caducidad >= date('now') THEN 1 END) as por_caducar,
                     COUNT(CASE WHEN fecha_caducidad IS NOT NULL 
-                          AND fecha_caducidad < CURRENT_DATE THEN 1 END) as caducados
+                        AND fecha_caducidad < date('now') THEN 1 END) as caducados
                 FROM insumos
             """
-            resultado = Database.execute_query(query)
+            resultado = Database.ejecutar_query(query)
             return resultado[0] if resultado else (0, 0, 0, 0, 0)
         except Exception as e:
             print(f"Error: {e}")
@@ -54,7 +54,7 @@ class InventarioCRUD:
                 GROUP BY c.id, c.nombre
                 ORDER BY c.nombre
             """
-            return Database.execute_query(query)
+            return Database.ejecutar_query(query)
         except:
             return []
     
@@ -68,9 +68,9 @@ class InventarioCRUD:
             if filtro == "stock_bajo":
                 where_clause = "WHERE i.piezas <= i.alerta_piezas AND i.alerta_piezas > 0"
             elif filtro == "por_caducar":
-                where_clause = "WHERE i.fecha_caducidad IS NOT NULL AND i.fecha_caducidad <= CURRENT_DATE + 7 AND i.fecha_caducidad >= CURRENT_DATE"
+                where_clause = "WHERE i.fecha_caducidad IS NOT NULL AND i.fecha_caducidad <= date('now', '+7 days') AND i.fecha_caducidad >= date('now')"
             elif filtro == "caducados":
-                where_clause = "WHERE i.fecha_caducidad IS NOT NULL AND i.fecha_caducidad < CURRENT_DATE"
+                where_clause = "WHERE i.fecha_caducidad IS NOT NULL AND i.fecha_caducidad < date('now')"
             elif filtro == "sin_stock":
                 where_clause = "WHERE i.piezas = 0"
             
@@ -82,7 +82,7 @@ class InventarioCRUD:
             elif orden == "piezas_desc":
                 orden_clause = "ORDER BY i.piezas DESC"
             elif orden == "caducidad":
-                orden_clause = "ORDER BY i.fecha_caducidad ASC NULLS LAST"
+                orden_clause = "ORDER BY CASE WHEN i.fecha_caducidad IS NULL THEN 1 ELSE 0 END, i.fecha_caducidad ASC"
             
             query = f"""
                 SELECT 
@@ -95,9 +95,9 @@ class InventarioCRUD:
                     i.fecha_caducidad,
                     i.alerta_piezas,
                     CASE 
-                        WHEN i.fecha_caducidad < CURRENT_DATE THEN 'CADUCADO'
+                        WHEN i.fecha_caducidad < date('now') THEN 'CADUCADO'
                         WHEN i.piezas <= i.alerta_piezas AND i.alerta_piezas > 0 THEN 'STOCK BAJO'
-                        WHEN i.fecha_caducidad <= CURRENT_DATE + 7 THEN 'POR CADUCAR'
+                        WHEN i.fecha_caducidad <= date('now', '+7 days') THEN 'POR CADUCAR'
                         ELSE 'OK'
                     END as estado
                 FROM insumos i
@@ -105,7 +105,7 @@ class InventarioCRUD:
                 {where_clause}
                 {orden_clause}
             """
-            return Database.execute_query(query)
+            return Database.ejecutar_query(query)
         except Exception as e:
             print(f"Error: {e}")
             return []
@@ -123,7 +123,7 @@ class InventarioCRUD:
                 GROUP BY unidad_contenido
                 ORDER BY unidad_contenido
             """
-            return Database.execute_query(query)
+            return Database.ejecutar_query(query)
         except:
             return []
     
@@ -142,7 +142,7 @@ class InventarioCRUD:
                 ORDER BY num_servicios DESC
                 LIMIT 10
             """
-            return Database.execute_query(query)
+            return Database.ejecutar_query(query)
         except:
             return []
 
@@ -332,7 +332,7 @@ class VentanaInventario:
             ("Caducados", caducados, "#9C27B0", PaletaColores.BLANCO, lambda: self.aplicar_filtro("caducados")),
         ]
         
-        for titulo, valor, bg, fg, icono, cmd in tarjetas_config:
+        for titulo, valor, bg, fg, icono, cmd in tarjetas_config: 
             frame, lbl = self.crear_tarjeta(self.frame_tarjetas, titulo, valor, bg, fg, icono, cmd)
             frame.pack(side="left", padx=(0, 10), fill="y")
             self.tarjetas[titulo] = lbl
@@ -345,8 +345,8 @@ class VentanaInventario:
         datos = InventarioCRUD.obtener_inventario_completo(self.filtro_actual, self.orden_actual)
         
         for inv in datos:
-            # Determinar tag según estado
-            estado = inv[8]
+            # Determinar tag según estado - acceso por nombre de columna
+            estado = inv['estado']
             if estado == "CADUCADO":
                 tag = "caducado"
             elif estado == "STOCK BAJO":
@@ -357,17 +357,24 @@ class VentanaInventario:
                 tag = "ok"
             
             # Formatear fecha
-            fecha_str = inv[6].strftime("%Y-%m-%d") if inv[6] else ""
+            fecha = inv['fecha_caducidad']
+            if fecha:
+                if isinstance(fecha, str):
+                    fecha_str = fecha
+                else:
+                    fecha_str = fecha.strftime("%Y-%m-%d")
+            else:
+                fecha_str = ""
             
             self.tabla.insert("", "end", values=(
-                inv[0],  # id
-                inv[1],  # nombre
-                inv[2],  # categoria
-                inv[3] or 0,  # piezas
-                inv[4] or "",  # contenido
-                inv[5] or "",  # unidad
-                fecha_str,  # caducidad
-                estado  # estado
+                inv['id'],
+                inv['nombre'],
+                inv['categoria'],
+                inv['piezas'] or 0,
+                inv['contenido_por_pieza'] or "",
+                inv['unidad_contenido'] or "",
+                fecha_str,
+                estado
             ), tags=(tag,))
         
         self.lbl_contador.config(text=f"{len(datos)} insumo{'s' if len(datos)!=1 else ''}")
@@ -446,7 +453,12 @@ class VentanaInventarioDetalle:
         tabla.column("alertas", width=80, anchor="center")
         
         for d in datos:
-            tabla.insert("", "end", values=d)
+            tabla.insert("", "end", values=(
+                d['categoria'],
+                d['num_insumos'],
+                d['total_piezas'],
+                d['alertas']
+            ))  # ✅
         
         tabla.pack(fill="both", expand=True)
         

@@ -1,93 +1,174 @@
 """
-Gestión de conexiones a la base de datos
+Conexión a la base de datos SQLite
 """
-
-import psycopg2
-from psycopg2 import pool
-from config.db_config import DB_CONFIG
-
+import sqlite3
+import os
+import sys
 
 class Database:
-    _connection_pool = None#Pool el conexiones en null
+    _connection = None
+    _db_path = None
     
-    @classmethod
-    def initialize(cls):
-        """Inicializa el pool de conexiones"""
+    @staticmethod
+    def get_base_path():
+        """Obtiene la ruta base de la aplicación"""
+        if getattr(sys, 'frozen', False):
+            # Si es ejecutable
+            return sys._MEIPASS
+        else:
+            # Si es script Python
+            return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    @staticmethod
+    def get_db_path():
+        """Obtiene la ruta de la base de datos"""
+        if Database._db_path is None:
+            base_path = Database.get_base_path()
+            Database._db_path = os.path.join(base_path, 'database', 'caruma.db')
+            
+            # Crear carpeta database si no existe
+            db_dir = os.path.dirname(Database._db_path)
+            if not os.path.exists(db_dir):
+                os.makedirs(db_dir)
+                print(f"✓ Carpeta creada: {db_dir}")
+        
+        return Database._db_path
+    
+    @staticmethod
+    def initialize():
+        """Inicializa la conexión a la base de datos"""
         try:
-            cls._connection_pool = psycopg2.pool.SimpleConnectionPool(
-                1, 10, **DB_CONFIG
-            )
-            print("✓ Pool de conexiones inicializado correctamente")
+            db_path = Database.get_db_path()
+            
+            # Verificar si la base de datos ya existe
+            db_existe = os.path.exists(db_path)
+            
+            Database._connection = sqlite3.connect(db_path, check_same_thread=False)
+            Database._connection.row_factory = sqlite3.Row
+            
+            # Habilitar claves foráneas
+            Database._connection.execute("PRAGMA foreign_keys = ON")
+            
+            print(f"Conexión a base de datos establecida: {db_path}")
+            
+            # Si la base de datos es nueva, crear tablas
+            if not db_existe:
+                print("Base de datos nueva detectada, creando tablas...")
+                Database.crear_tablas()
+            else:
+                print("Base de datos existente encontrada")
+            
         except Exception as e:
-            print(f"✗ Error al inicializar pool de conexiones: {e}")
-            raise
+            raise Exception(f"Error al conectar con la base de datos: {e}")
     
-    @classmethod
-    def get_connection(cls):
-        """Obtiene una conexión del pool"""
-        if cls._connection_pool is None:
-            cls.initialize()
-        return cls._connection_pool.getconn()
+    @staticmethod
+    def get_connection():
+        """Obtiene la conexión a la base de datos"""
+        if Database._connection is None:
+            Database.initialize()
+        return Database._connection
     
-    @classmethod
-    def return_connection(cls, connection):
-        """Devuelve la conexión al pool"""
-        cls._connection_pool.putconn(connection)
-    
-    @classmethod
-    def execute_query(cls, query, params=None):
-        """Ejecuta una consulta SELECT"""
-        conn = cls.get_connection()
+    @staticmethod
+    def crear_tablas():
+        """Crea las tablas y carga datos iniciales desde schema.sql"""
+        conn = Database.get_connection()
+        cursor = conn.cursor()
+        
+        # Verificar si ya existen tablas
+        cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='categorias'")
+        tabla_existe = cursor.fetchone()[0] > 0
+        
+        if tabla_existe:
+            print("✓ Tablas ya existen")
+            return
+        
+        # Buscar archivo schema.sql
+        base_path = Database.get_base_path()
+        schema_path = os.path.join(base_path, 'database', 'schema.sql')
+        
+        print(f"📂 Buscando schema en: {schema_path}")
+        
+        if not os.path.exists(schema_path):
+            print(f"✗ ARCHIVO NO ENCONTRADO: {schema_path}")
+            raise FileNotFoundError(f"No se encontró schema.sql en: {schema_path}")
+        
         try:
-            cursor = conn.cursor()
-            cursor.execute(query, params)
-            result = cursor.fetchall()
-            cursor.close()
-            return result
-        except Exception as e:
-            print(f"Error en execute_query: {e}")
-            raise
-        finally:
-            cls.return_connection(conn)
-    
-    @classmethod
-    def execute_update(cls, query, params=None):
-        """Ejecuta INSERT, UPDATE, DELETE"""
-        conn = cls.get_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute(query, params)
+            with open(schema_path, 'r', encoding='utf-8') as f:
+                schema_sql = f.read()
+            
+            print(f"✓ Archivo schema.sql encontrado ({len(schema_sql)} caracteres)")
+            
+            # Ejecutar el script SQL
+            cursor.executescript(schema_sql)
             conn.commit()
-            cursor.close()
-            return True
+            
+            # Verificar que se crearon las tablas
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            tablas = cursor.fetchall()
+            print(f"✓ Tablas creadas: {[tabla[0] for tabla in tablas]}")
+            
+            # Verificar datos de ejemplo en categorías
+            cursor.execute("SELECT COUNT(*) FROM categorias")
+            count = cursor.fetchone()[0]
+            print(f"✓ Categorías insertadas: {count}")
+            
+            # Verificar datos de ejemplo en insumos
+            cursor.execute("SELECT COUNT(*) FROM insumos")
+            count = cursor.fetchone()[0]
+            print(f"✓ Insumos insertados: {count}")
+            
+        except Exception as e:
+            print(f"✗ Error al cargar schema.sql: {e}")
+            import traceback
+            traceback.print_exc()
+            raise
+    
+    @staticmethod
+    def ejecutar_query(query, params=None):
+        """Ejecuta una consulta SELECT y retorna los resultados"""
+        try:
+            conn = Database.get_connection()
+            cursor = conn.cursor()
+            
+            if params:
+                cursor.execute(query, params)
+            else:
+                cursor.execute(query)
+            
+            return cursor.fetchall()
+        except Exception as e:
+            print(f"Error al ejecutar query: {e}")
+            print(f"Query: {query}")
+            if params:
+                print(f"Params: {params}")
+            raise
+    
+    @staticmethod
+    def ejecutar_comando(query, params=None):
+        """Ejecuta un comando INSERT, UPDATE o DELETE"""
+        try:
+            conn = Database.get_connection()
+            cursor = conn.cursor()
+            
+            if params:
+                cursor.execute(query, params)
+            else:
+                cursor.execute(query)
+            
+            conn.commit()
+            return cursor.lastrowid
         except Exception as e:
             conn.rollback()
-            print(f"Error en execute_update: {e}")
+            print(f"Error al ejecutar comando: {e}")
+            print(f"Query: {query}")
+            if params:
+                print(f"Params: {params}")
             raise
-        finally:
-            cls.return_connection(conn)
     
-    @classmethod
-    def execute_insert_returning(cls, query, params=None):
-        """Ejecuta INSERT y retorna el ID insertado"""
-        conn = cls.get_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute(query, params)
-            result = cursor.fetchone()
-            conn.commit()
-            cursor.close()
-            return result[0] if result else None
-        except Exception as e:
-            conn.rollback()
-            print(f"Error en execute_insert_returning: {e}")
-            raise
-        finally:
-            cls.return_connection(conn)
-    
-    @classmethod
-    def close_all_connections(cls):
-        """Cierra todas las conexiones del pool"""
-        if cls._connection_pool:
-            cls._connection_pool.closeall()
-            print("Todas las conexiones cerradas")
+    @staticmethod
+    def close_all_connections():
+        """Cierra la conexión a la base de datos"""
+        if Database._connection:
+            Database._connection.close()
+            Database._connection = None
+            print("Conexión cerrada")
